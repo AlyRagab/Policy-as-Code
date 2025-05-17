@@ -1,0 +1,5 @@
+apiVersion: v2
+name: testapp
+description: A minimal test chart to validate OPA policies
+version: 0.1.0
+appVersion: "1.0"

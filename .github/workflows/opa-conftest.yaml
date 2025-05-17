@@ -1,0 +1,33 @@
+name: Conftest Policy Checks
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  policy-check:
+    name: Run OPA Conftest Checks on Helm Charts
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v3
+
+      - name: Install Conftest
+        run: |
+          wget https://github.com/open-policy-agent/conftest/releases/latest/download/conftest_Linux_x86_64.tar.gz
+          tar xzf conftest_Linux_x86_64.tar.gz
+          sudo mv conftest /usr/local/bin/
+
+      - name: Render Helm Chart
+        run: |
+          helm template test-release ./charts/mychart > rendered.yaml
+
+      - name: Run Conftest Against Rendered YAML
+        run: |
+          conftest test rendered.yaml --policy ./policy-as-code/kubernetes
