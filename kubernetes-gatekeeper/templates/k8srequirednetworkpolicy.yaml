@@ -1,0 +1,42 @@
+apiVersion: templates.gatekeeper.sh/v1
+kind: ConstraintTemplate
+metadata:
+  name: k8srequirednetworkpolicy
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sRequiredNetworkPolicy
+      validation:
+        openAPIV3Schema:
+          type: object
+          properties:
+            labels:
+              type: array
+              items:
+                type: string
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8srequirednetworkpolicy
+
+        violation[{"msg": msg}] {
+          namespace := input.review.object
+          not namespace.metadata.labels
+          msg := sprintf("namespace <%v> has no labels", [namespace.metadata.name])
+        }
+
+        violation[{"msg": msg}] {
+          namespace := input.review.object
+          label := input.parameters.labels[_]
+          not namespace.metadata.labels[label]
+          msg := sprintf("namespace <%v> is missing required label <%v>", [namespace.metadata.name, label])
+        }
+
+        violation[{"msg": msg}] {
+          namespace := input.review.object
+          label := input.parameters.requiredLabels[_]
+          value := namespace.metadata.labels[label.key]
+          not re_match(label.regex, value)
+          msg := sprintf("namespace <%v> label <%v: %v> does not match required regex <%v>", [namespace.metadata.name, label.key, value, label.regex])
+        } 

@@ -1,0 +1,14 @@
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sRequiredNetworkPolicy
+metadata:
+  name: required-network-policy
+spec:
+  match:
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Namespace"]
+  parameters:
+    labels:
+      - "network-policy"
+    annotations:
+      - "network-policy/type" 

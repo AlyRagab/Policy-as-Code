@@ -29,4 +29,4 @@ jobs:
 
       - name: Run Conftest Against Rendered YAML
         run: |
-          conftest test rendered.yaml --policy ./policy-as-code/kubernetes
+          conftest test rendered.yaml --policy ./rego-policies
