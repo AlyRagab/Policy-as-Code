@@ -20,8 +20,7 @@ jobs:
 
       - name: Install Conftest
         run: |
-          wget https://github.com/open-policy-agent/conftest/releases/latest/download/conftest_Linux_x86_64.tar.gz
-          tar xzf conftest_Linux_x86_64.tar.gz
+          wget -qO- https://raw.githubusercontent.com/open-policy-agent/conftest/master/install.sh | VERSION=0.60.0 sh
           sudo mv conftest /usr/local/bin/
 
       - name: Render Helm Chart
